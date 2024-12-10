@@ -11,9 +11,22 @@ public class AjiraNet {
                 String[] params = command.split(" ");
                 switch (params[0]) {
                     case "ADD":
-                        // ex : ADD COMPUTER A1
-                        if (params.length != 3) throw new IllegalArgumentException("Error : Invalid command syntax");
-                        network.addDevice(params[2], params[1].toUpperCase());
+                        // ex : ADD COMPUTER A1, ADD BRIDGE A2 UPPER
+                        if (params.length < 3) {
+                            throw new IllegalArgumentException("Error: Invalid command syntax.");
+                        }
+
+                        if (params[1].equals(DeviceType.BRIDGE.getValue())) {
+                            if (params.length != 4) {
+                                throw new IllegalArgumentException("Error: Invalid command syntax for BRIDGE. Use 'ADD BRIDGE <NAME> <BRIDGE_TYPE>'.");
+                            }
+                            network.addBridge(params[2], params[3]);
+                        } else {
+                            if (params.length != 3) {
+                                throw new IllegalArgumentException("Error: Invalid command syntax for DEVICE. Use 'ADD <DEVICE_TYPE> <NAME>'.");
+                            }
+                            network.addDevice(params[2], params[1]);
+                        }
                         System.out.println("Successfully added " + params[2]);
                         break;
 
@@ -36,7 +49,10 @@ public class AjiraNet {
                         network.setDeviceStrength(params[1], Integer.parseInt(params[2]));
                         System.out.println("Successfully defined strength.");
                         break;
-
+                    case "SEND":
+                        if (params.length != 4) throw new IllegalArgumentException("Error: Invalid command syntax");
+                        System.out.println(network.send(params[1], params[2], params[3]));
+                        break;
                     default:
                         System.out.println("Invalid command.");
                 }
