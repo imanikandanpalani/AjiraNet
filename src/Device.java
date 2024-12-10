@@ -1,13 +1,31 @@
 public class Device {
-    String name;
-    DeviceType type;
-    int strength;
-    BridgeType bridgeType;
+    private static final int DEFAULT_COMPUTER_STRENGTH = 5;
+    private static final int DEFAULT_REPEATER_STRENGTH = -1;
+
+    private String name;
+    private DeviceType type;
+    private int strength;
+    private BridgeType bridgeType;
 
     public Device(String name, String type) {
-        this.setName(name);
-        this.setType(type);
-        this.strength = this.type == DeviceType.COMPUTER ? 5 : -1; // Default strength for computers
+        setName(name);
+        setType(type);
+        this.strength = this.type == DeviceType.COMPUTER ? DEFAULT_COMPUTER_STRENGTH : DEFAULT_REPEATER_STRENGTH;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Device name cannot be null or empty.");
+        }
+        this.name = name;
+    }
+
+    public DeviceType getType() {
+        return type;
     }
 
     public void setType(String type) {
@@ -18,11 +36,8 @@ public class Device {
         }
     }
 
-    public void setName(String name) {
-        if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("Device name cannot be null or empty.");
-        }
-        this.name = name;
+    public int getStrength() {
+        return strength;
     }
 
     public void setStrength(int strength) {
@@ -33,6 +48,10 @@ public class Device {
             throw new IllegalArgumentException("Strength cannot be negative.");
         }
         this.strength = strength;
+    }
+
+    public BridgeType getBridgeType() {
+        return bridgeType;
     }
 
     public void setBridgeType(String bridgeType) {
@@ -51,7 +70,7 @@ public class Device {
             case LOWER:
                 return message.toLowerCase();
             default:
-                return message; // Default transformation
+                return message;
         }
     }
 }

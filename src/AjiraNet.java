@@ -11,47 +11,19 @@ public class AjiraNet {
                 String[] params = command.split(" ");
                 switch (params[0]) {
                     case "ADD":
-                        // ex : ADD COMPUTER A1, ADD BRIDGE A2 UPPER
-                        if (params.length < 3) {
-                            throw new IllegalArgumentException("Error: Invalid command syntax.");
-                        }
-
-                        if (params[1].equals(DeviceType.BRIDGE.getValue())) {
-                            if (params.length != 4) {
-                                throw new IllegalArgumentException("Error: Invalid command syntax for BRIDGE. Use 'ADD BRIDGE <NAME> <BRIDGE_TYPE>'.");
-                            }
-                            network.addBridge(params[2], params[3]);
-                        } else {
-                            if (params.length != 3) {
-                                throw new IllegalArgumentException("Error: Invalid command syntax for DEVICE. Use 'ADD <DEVICE_TYPE> <NAME>'.");
-                            }
-                            network.addDevice(params[2], params[1]);
-                        }
-                        System.out.println("Successfully added " + params[2]);
+                        handleAddCommand(network, params);
                         break;
-
                     case "CONNECT":
-                        // ex : CONNECT A1 A2
-                        if (params.length != 3) throw new IllegalArgumentException("Error : Invalid command syntax");
-                        network.connectDevice(params[1], params[2]);
-                        System.out.println("Successfully connected.");
+                        handleConnectCommand(network, params);
                         break;
-
                     case "INFO_ROUTE":
-                        // ex : INFO_ROUTE A1 A4
-                        if (params.length != 3) throw new IllegalArgumentException("Error : Invalid command syntax");
-                        System.out.println(network.findRoute(params[1], params[2]));
+                        handleInfoRouteCommand(network, params);
                         break;
-
                     case "SET_DEVICE_STRENGTH":
-                        // ex : SET_DEVICE_STRENGTH A1 3
-                        if (params.length != 3) throw new IllegalArgumentException("Error : Invalid command syntax");
-                        network.setDeviceStrength(params[1], Integer.parseInt(params[2]));
-                        System.out.println("Successfully defined strength.");
+                        handleSetDeviceStrengthCommand(network, params);
                         break;
                     case "SEND":
-                        if (params.length != 4) throw new IllegalArgumentException("Error: Invalid command syntax");
-                        System.out.println(network.send(params[1], params[2], params[3]));
+                        handleSendCommand(network, params);
                         break;
                     default:
                         System.out.println("Invalid command.");
@@ -60,5 +32,46 @@ public class AjiraNet {
                 System.out.println("Error occurred: " + e.getMessage());
             }
         }
+    }
+
+    private static void handleAddCommand(Network network, String[] params) {
+        if (params.length < 3) {
+            throw new IllegalArgumentException("Error: Invalid command syntax.");
+        }
+
+        if (params[1].equals(DeviceType.BRIDGE.getValue())) {
+            if (params.length != 4) {
+                throw new IllegalArgumentException("Error: Invalid command syntax for BRIDGE. Use 'ADD BRIDGE <NAME> <BRIDGE_TYPE>'.");
+            }
+            network.addBridge(params[2], params[3]);
+        } else {
+            if (params.length != 3) {
+                throw new IllegalArgumentException("Error: Invalid command syntax for DEVICE. Use 'ADD <DEVICE_TYPE> <NAME>'.");
+            }
+            network.addDevice(params[2], params[1]);
+        }
+        System.out.println("Successfully added " + params[2]);
+    }
+
+    private static void handleConnectCommand(Network network, String[] params) {
+        if (params.length != 3) throw new IllegalArgumentException("Error: Invalid command syntax");
+        network.connectDevice(params[1], params[2]);
+        System.out.println("Successfully connected.");
+    }
+
+    private static void handleInfoRouteCommand(Network network, String[] params) {
+        if (params.length != 3) throw new IllegalArgumentException("Error: Invalid command syntax");
+        System.out.println(network.findRoute(params[1], params[2]));
+    }
+
+    private static void handleSetDeviceStrengthCommand(Network network, String[] params) {
+        if (params.length != 3) throw new IllegalArgumentException("Error: Invalid command syntax");
+        network.setDeviceStrength(params[1], Integer.parseInt(params[2]));
+        System.out.println("Successfully defined strength.");
+    }
+
+    private static void handleSendCommand(Network network, String[] params) {
+        if (params.length != 4) throw new IllegalArgumentException("Error: Invalid command syntax");
+        System.out.println(network.send(params[1], params[2], params[3]));
     }
 }

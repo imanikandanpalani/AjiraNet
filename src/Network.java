@@ -49,30 +49,30 @@ public class Network {
 
         Queue<Route> queue = new LinkedList<>();
         Set<String> visited = new HashSet<>();
-        queue.add(new Route(source, devicesMap.get(source).strength, new ArrayList<>(List.of(source))));
+        queue.add(new Route(source, devicesMap.get(source).getStrength(), new ArrayList<>(List.of(source))));
         visited.add(source);
 
         while (!queue.isEmpty()) {
             Route current = queue.poll();
-            String lastNode = current.path.get(current.path.size() - 1);
+            String lastNode = current.getPath().get(current.getPath().size() - 1);
 
             if (lastNode.equals(destination)) {
-                return String.join(" -> ", current.path);
+                return String.join(" -> ", current.getPath());
             }
 
-            for (String neighbor : connectionsMap.get(lastNode)) {
-                if (!visited.contains(neighbor) && current.remainingStrength > 0) {
-                    visited.add(neighbor);
-                    List<String> newPath = new ArrayList<>(current.path);
-                    newPath.add(neighbor);
-                    int newStrength = (devicesMap.get(neighbor).type == DeviceType.REPEATER)
-                            ? current.remainingStrength * 2
-                            : (devicesMap.get(neighbor).type == DeviceType.BRIDGE)
-                            ? current.remainingStrength - 2
-                            : current.remainingStrength - 1;
-                    queue.add(new Route(neighbor, newStrength, newPath));
-                }
-            }
+            connectionsMap.get(lastNode).stream()
+                    .filter(neighbor -> !visited.contains(neighbor) && current.getRemainingStrength() > 0)
+                    .forEach(neighbor -> {
+                        visited.add(neighbor);
+                        List<String> newPath = new ArrayList<>(current.getPath());
+                        newPath.add(neighbor);
+                        int newStrength = (devicesMap.get(neighbor).getType() == DeviceType.REPEATER)
+                                ? current.getRemainingStrength() * 2
+                                : (devicesMap.get(neighbor).getType() == DeviceType.BRIDGE)
+                                ? current.getRemainingStrength() - 2
+                                : current.getRemainingStrength() - 1;
+                        queue.add(new Route(neighbor, newStrength, newPath));
+                    });
         }
         return "Error: No route found between " + source + " and " + destination + ".";
     }
@@ -106,7 +106,7 @@ public class Network {
     }
 
     private boolean isInvalidSourceOrDestination(String deviceName) {
-        DeviceType type = devicesMap.get(deviceName).type;
+        DeviceType type = devicesMap.get(deviceName).getType();
         return type == DeviceType.REPEATER || type == DeviceType.BRIDGE;
     }
 }
